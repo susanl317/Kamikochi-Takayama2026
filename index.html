@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 東京・上高地・高山・名古屋 7日遊</title>
+    <style>
+        :root {
+            --primary-color: #4B6E59;      /* 上高地森林綠 */
+            --primary-light: #708C7B;      /* 鼠尾草綠 */
+            --accent-color: #C0A98E;       /* 溫潤原木色 */
+            --bg-color: #F8F9F7;           /* 柔和米白 */
+            --card-bg: #FFFFFF;            /* 卡片純白 */
+            --text-main: #2C352F;          /* 深炭灰 */
+            --text-muted: #6B756E;         /* 淺灰綠 */
+            --border-color: #E6EAE7;       /* 邊線色 */
+            
+            --tag-transport: #E8F0EA; --tag-transport-text: #2D523A;
+            --tag-food: #FFF2E5;      --tag-food-text: #B36B00;
+            --tag-sight: #E5F0FF;     --tag-sight-text: #004D99;
+            --tag-hotel: #F5E6F5;     --tag-hotel-text: #660066;
+            --tag-ticket: #FFEBEB;    --tag-ticket-text: #990000;
+
+            --shadow-sm: 0 2px 8px rgba(44, 53, 47, 0.05);
+            --shadow-md: 0 8px 24px rgba(44, 53, 47, 0.08);
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Apple LiGothic', '微軟正黑體', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .hero {
+            position: relative; height: 50vh; min-height: 350px;
+            background-color: var(--primary-color);
+            background-image: linear-gradient(rgba(44, 53, 47, 0.5), rgba(44, 53, 47, 0.8)), 
+                              url('https://images.unsplash.com/photo-1624253321171-1be53e12f5f4?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center; text-align: center; color: #FFFFFF; padding: 0 20px;
+        }
+        .hero-content h1 { font-size: 2.2rem; font-weight: 600; letter-spacing: 2px; margin-bottom: 12px; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .hero-content p { font-size: 1.1rem; letter-spacing: 1px; opacity: 0.9; }
+
+        .sticky-nav {
+            position: sticky; top: 0; z-index: 100;
+            background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
+            padding: 12px 20px; display: flex; overflow-x: auto; white-space: nowrap; gap: 8px;
+        }
+        .sticky-nav::-webkit-scrollbar { display: none; }
+        .nav-btn {
+            text-decoration: none; color: var(--text-muted); font-weight: bold;
+            padding: 8px 16px; border-radius: 20px; transition: all 0.3s ease; font-size: 0.95rem; cursor: pointer;
+        }
+        .nav-btn:hover, .nav-btn.active { background-color: var(--primary-color); color: #FFFFFF; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 30px 20px; }
+
+        .route-map {
+            background: var(--card-bg); border-radius: var(--radius-lg); padding: 24px;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 40px;
+        }
+        .route-map h3 { color: var(--primary-color); font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .route-line-container { display: flex; align-items: center; justify-content: space-between; position: relative; padding: 0 10px; overflow-x: auto; }
+        .route-line-container::-webkit-scrollbar { display: none; }
+        /* 繪製虛線背景 */
+        .route-line-container::before {
+            content: ''; position: absolute; top: 20px; left: 30px; right: 30px;
+            height: 2px; background: repeating-linear-gradient(to right, var(--primary-light) 0, var(--primary-light) 5px, transparent 5px, transparent 10px); z-index: 1;
+        }
+        .route-node { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; min-width: 70px; }
+        .node-circle {
+            width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-color); color: #FFF;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; border: 3px solid #FFF; box-shadow: var(--shadow-sm); margin-bottom: 8px; font-size: 0.85rem;
+        }
+        .node-label { font-size: 0.85rem; font-weight: bold; color: var(--text-main); }
+        .node-sub { font-size: 0.75rem; color: var(--text-muted); }
+
+        .day-section { margin-bottom: 24px; scroll-margin-top: 80px; }
+        .day-header {
+            display: flex; align-items: center; padding: 16px 20px;
+            background-color: var(--card-bg); border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm); border-left: 5px solid var(--primary-color);
+            cursor: pointer; transition: background-color 0.2s;
+        }
+        .day-header:hover { background-color: #F0F4F1; }
+        .day-header h2 { font-size: 1.5rem; color: var(--primary-color); font-weight: bold; }
+        .city-badge {
+            margin-left: 16px; background-color: var(--accent-color); color: #FFF;
+            padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; letter-spacing: 1px;
+        }
+        .accordion-indicator { margin-left: auto; font-size: 1.2rem; color: var(--text-muted); transition: transform 0.3s; }
+        .day-header.active .accordion-indicator { transform: rotate(180deg); }
+        
+        .day-content { display: none; padding-top: 24px; animation: fadeIn 0.4s forwards; }
+        .day-content.open { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .task-box {
+            background-color: #FDF9F1; border: 1px dashed var(--accent-color);
+            border-radius: var(--radius-md); padding: 16px; margin-bottom: 32px; color: var(--text-muted); font-size: 0.95rem;
+        }
+        .task-box strong { color: var(--accent-color); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+
+        /* 時間軸 */
+        .timeline { position: relative; }
+        .timeline::before { content: ''; position: absolute; left: 80px; top: 0; bottom: 0; width: 2px; background-color: var(--border-color); }
+        .timeline-item { display: flex; margin-bottom: 24px; position: relative; }
+        .timeline-time { width: 80px; flex-shrink: 0; font-weight: bold; color: var(--primary-light); padding-top: 16px; padding-right: 16px; text-align: right; font-size: 1.1rem; }
+        .timeline-card {
+            background-color: var(--card-bg); padding: 20px; border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm); flex-grow: 1; margin-left: 20px; position: relative;
+            border: 1px solid var(--border-color); transition: transform 0.2s;
+        }
+        .timeline-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .timeline-card::before {
+            content: ''; position: absolute; left: -25px; top: 24px; width: 10px; height: 10px;
+            border-radius: 50%; background-color: var(--primary-color); border: 3px solid var(--bg-color);
+        }
+
+        .tags-wrapper { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+        .tag { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px;}
+        .tag-transport { background-color: var(--tag-transport); color: var(--tag-transport-text); }
+        .tag-food { background-color: var(--tag-food); color: var(--tag-food-text); }
+        .tag-sight { background-color: var(--tag-sight); color: var(--tag-sight-text); }
+        .tag-hotel { background-color: var(--tag-hotel); color: var(--tag-hotel-text); }
+        .tag-ticket { background-color: var(--tag-ticket); color: var(--tag-ticket-text); }
+
+        .timeline-card h3 { font-size: 1.25rem; margin-bottom: 8px; color: var(--text-main); }
+        .timeline-card p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 8px; }
+        .status { display: inline-block; font-size: 0.8rem; background-color: #F0F0F0; padding: 2px 8px; border-radius: 4px; color: #555; }
+        .status.done { background-color: #E8F4E8; color: #2E7D32; }
+
+        /* 按鈕設計 */
+        .btn-group { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+        .action-btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+            background-color: var(--bg-color); color: var(--primary-color); border: 1px solid var(--border-color);
+            border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: bold; transition: 0.2s;
+        }
+        .action-btn:hover { background-color: var(--primary-light); color: #FFF; border-color: var(--primary-light); }
+        .btn-klook { background-color: #FF5A5F; color: #FFF; border-color: #FF5A5F; }
+        .btn-klook:hover { background-color: #E0484D; border-color: #E0484D; }
+
+        /* 飯店卡片 */
+        .hotel-card {
+            background-color: var(--primary-color); color: #FFF; padding: 24px; border-radius: var(--radius-lg);
+            margin-top: 10px; margin-bottom: 30px; margin-left: 100px; box-shadow: var(--shadow-md);
+        }
+        .hotel-card h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 1.2rem; color: var(--accent-color); }
+        .hotel-card p { font-size: 0.95rem; margin-bottom: 6px; opacity: 0.9; }
+        .hotel-card .price { font-size: 1.1rem; font-weight: bold; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 12px; }
+
+        .tools-section { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .tools-section.two-col { grid-template-columns: 1fr 1fr; } }
+        .tool-card {
+            background: var(--card-bg); border-radius: var(--radius-lg); padding: 20px;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
+        }
+        .tool-card h3 { font-size: 1.1rem; color: var(--primary-color); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+        .checklist { list-style: none; }
+        .checklist li { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; font-size: 0.95rem; }
+        .checklist li.done { color: var(--text-muted); text-decoration: line-through; }
+        .checklist input[type="checkbox"] { accent-color: var(--primary-color); width: 16px; height: 16px; margin-top: 4px; flex-shrink: 0; }
+        
+        /* 響應式 */
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 1.8rem; }
+            .timeline::before { left: 20px; }
+            .timeline-item { flex-direction: column; }
+            .timeline-time { width: auto; text-align: left; padding-left: 40px; padding-bottom: 8px; padding-top: 0; }
+            .timeline-card { margin-left: 40px; }
+            .timeline-card::before { left: -25px; top: -24px; }
+            .hotel-card { margin-left: 0; }
+            .sticky-nav { justify-content: flex-start; }
+            .day-header { padding: 14px; }
+            .day-header h2 { font-size: 1.3rem; }
+            .route-line-container::before { top: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>2026 夏・日本阿爾卑斯紀行</h1>
+            <p>東京 ➔ 上高地 ➔ 高山 ➔ 犬山 ➔ 名古屋</p>
+            <p style="font-size: 0.9rem; margin-top: 12px; color: var(--accent-color); font-weight: bold;">2026.06.17 - 2026.06.23</p>
+        </div>
+    </header>
+
+    <nav class="sticky-nav">
+        <a href="#day1" class="nav-btn active" data-target="day1">Day 1 東京</a>
+        <a href="#day2" class="nav-btn" data-target="day2">Day 2 上高地</a>
+        <a href="#day3" class="nav-btn" data-target="day3">Day 3 平湯</a>
+        <a href="#day4" class="nav-btn" data-target="day4">Day 4 高山</a>
+        <a href="#day5" class="nav-btn" data-target="day5">Day 5 高山/犬山</a>
+        <a href="#day6" class="nav-btn" data-target="day6">Day 6 犬山</a>
+        <a href="#day7" class="nav-btn" data-target="day7">Day 7 名古屋</a>
+        <a href="#other" class="nav-btn" data-target="other" style="color: var(--primary-color);">📋 其他事項</a>
+    </nav>
+
+    <main class="container">
+
+        <section class="route-map">
+            <h3>🗺️ 行程路線總覽</h3>
+            <div class="route-line-container">
+                <div class="route-node">
+                    <div class="node-circle">D1</div>
+                    <span class="node-label">東京</span>
+                    <span class="node-sub">✈️ 入境</span>
+                </div>
+                <div class="route-node">
+                    <div class="node-circle">D2</div>
+                    <span class="node-label">上高地</span>
+                    <span class="node-sub">🚆 新幹線</span>
+                </div>
+                <div class="route-node">
+                    <div class="node-circle">D3</div>
+                    <span class="node-label">平湯</span>
+                    <span class="node-sub">🚌 濃飛巴士</span>
+                </div>
+                <div class="route-node">
+                    <div class="node-circle">D4</div>
+                    <span class="node-label">高山</span>
+                    <span class="node-sub">🚠 纜車/巴士</span>
+                </div>
+                <div class="route-node">
+                    <div class="node-circle">D5-6</div>
+                    <span class="node-label">犬山</span>
+                    <span class="node-sub">🚆 JR/名鐵</span>
+                </div>
+                <div class="route-node">
+                    <div class="node-circle">D7</div>
+                    <span class="node-label">名古屋</span>
+                    <span class="node-sub">✈️ 賦歸</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="day1" class="day-section">
+            <div class="day-header active" onclick="toggleSection('day1')">
+                <h2>Day 1 | 06.17 (三)</h2>
+                <span class="city-badge">📍 東京 Tokyo</span>
+                <span class="accordion-indicator">▼</span>
+            </div>
+            <div class="day-content open" id="content-day1">
+                <div class="task-box">
+                    <strong>💡 今日代辦</strong>
+                    1. 交通：成田到東京車站請使用「西瓜卡」<br>
+                    2. 行李：打包確認是否先利用宅急便寄到高山 or 犬山
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">06:00</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">🚗 交通</span></div>
+                            <h3>機場接送出發</h3>
+                            <p>前往桃園機場 第一/第二航廈</p>
+                            <span class="status done">✓ 已預約</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">08:30</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">✈️ 航班</span></div>
+                            <h3>星宇航空 JX800</h3>
+                            <p>TPE 08:30 ➔ TYO 12:55</p>
+                            <span class="status done">✓ 已購票</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">13:30</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">🚆 交通</span></div>
+                            <h3>Skyliner 轉 JR</h3>
+                            <p>抵達成田機場後，搭乘交通工具前往東京市區飯店</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hotel-card">
+                    <h3>🏨 住宿：Hotel Monte Hermana Tokyo</h3>
+                    <p><strong>房型：</strong> 高級雙床房 x 1 (21m²)</p>
+                    <p><strong>備註：</strong> 包含早餐 (6:30～9:30) / 退房 11:00</p>
+                    <p class="price">費用：¥33,313 (已刷卡，台幣約 6800)</p>
+                    <div class="btn-group">
+                        <a href="https://maps.google.com/?q=Hotel+Monte+Hermana+Tokyo" target="_blank" class="action-btn">📍 地圖</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="day2" class="day-section">
+            <div class="day-header" onclick="toggleSection('day2')">
+                <h2>Day 2 | 06.18 (四)</h2>
+                <span class="city-badge">📍 上高地 Kamikochi</span>
+                <span class="accordion-indicator">▼</span>
+            </div>
+            <div class="day-content" id="content-day2">
+                <div class="task-box">
+                    <strong>💡 今日代辦</strong>
+                    1. 交通：新幹線(現場買) / 長野到上高地(已買票，需印或截圖)<br>
+                    2. 行李：巴士總站 15:00 前寄放會直送飯店，每件 ¥1,000。
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">06:30</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-food">🍽️ 餐廳</span></div>
+                            <h3>飯店早餐</h3>
+                            <p>享用 Hotel Monte Hermana 早餐 (6:30～9:30)</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">08:11</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper">
+                                <span class="tag tag-transport">🚆 新幹線</span>
+                                <span class="tag tag-transport">🚌 巴士</span>
+                            </div>
+                            <h3>東京 ➔ 長野 ➔ 上高地</h3>
+                            <p>• 08:11-09:38 東京/長野 (新幹線，現場購票)<br>• 10:00-12:40 長野/上高地 (Alpico巴士，已購票)</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">下午</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-sight">📸 景點</span></div>
+                            <h3>上高地散策</h3>
+                            <p>河童橋 Check-in 放行李後，前往大正池漫步享受自然風光。</p>
+                            <div class="btn-group">
+                                <a href="https://maps.google.com/?q=上高地大正池" target="_blank" class="action-btn">📍 地圖</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">18:00</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-food">🍽️ 餐廳</span></div>
+                            <h3>飯店晚餐與觀星</h3>
+                            <p>晚餐時間 (18:00 或 18:30)，餐後觀賞山谷星空。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hotel-card">
+                    <h3>🏨 住宿：上高地 Alps Hotel</h3>
+                    <p><strong>房型：</strong> 西式雙床房 (一泊二食)</p>
+                    <p class="price">費用：¥68,000 (已刷卡，台幣約 13800)</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="day3" class="day-section">
+            <div class="day-header" onclick="toggleSection('day3')">
+                <h2>Day 3 | 06.19 (五)</h2>
+                <span class="city-badge">📍 平湯 Hirayu</span>
+                <span class="accordion-indicator">▼</span>
+            </div>
+            <div class="day-content" id="content-day3">
+                <div class="task-box">
+                    <strong>💡 今日代辦</strong>
+                    1. 行李：10:00 前交給飯店，11:00-16:00 於上高地巴士總站領回。<br>
+                    2. 交通：上高地到平湯巴士 (免預約，現場購票)。
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">早上</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-sight">📸 景點</span></div>
+                            <h3>明神池健行</h3>
+                            <p>飯店早餐後，前往明神池健行，並品嚐當地有名的烤魚。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">14:00</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">🚌 濃飛巴士</span></div>
+                            <h3>上高地 ➔ 平湯溫泉</h3>
+                            <p>領取行李後，搭乘巴士前往平湯。<strong>【建議搭乘 14:00 或 15:00 班次，車程約25分鐘】</strong></p>
+                            <div class="btn-group">
+                                <a href="https://www.nouhibus.co.jp/route_bus/kamikochi-line-zh/" target="_blank" class="action-btn">🕒 查看時刻表</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hotel-card">
+                    <h3>🏨 住宿：平湯 Tabist Kazeyuki</h3>
+                    <p><strong>預訂：</strong> Booking.com (PIN: 0034)</p>
+                    <p><strong>房型：</strong> 日式四人房－禁煙 (1晚)</p>
+                    <p class="price">費用：¥25,000 (已付款，台幣約 5000)</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="day4" class="day-section">
+            <div class="day-header" onclick="toggleSection('day4')">
+                <h2>Day 4 | 06.20 (六)</h2>
+                <span class="city-badge">📍 高山 Takayama</span>
+                <span class="accordion-indicator">▼</span>
+            </div>
+            <div class="day-content" id="content-day4">
+                <div class="task-box">
+                    <strong>💡 今日代辦</strong>
+                    1. 行李：新穗高溫泉站設有投幣式置物櫃，或一樓服務台付費寄放。<br>
+                    2. 門票：纜車票可提前線上買，當日有效。
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">08:40</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">🚌 濃飛巴士</span></div>
+                            <h3>平湯溫泉 ➔ 新穗高纜車站</h3>
+                            <p>搭乘路線巴士前往。<strong>【建議搭乘 08:40 或 09:40 班次，車程約40分鐘】</strong></p>
+                            <div class="btn-group">
+                                <a href="https://www.nouhibus.co.jp/route_bus/shinhotaka-line-zh/" target="_blank" class="action-btn">🕒 查看時刻表</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">上午</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper">
+                                <span class="tag tag-ticket">🎫 門票</span>
+                                <span class="tag tag-sight">🚠 景點</span>
+                            </div>
+                            <h3>新穗高纜車絕景</h3>
+                            <p>搭乘日本唯一的雙層纜車，登頂欣賞北阿爾卑斯群山絕景與雲海。</p>
+                            <div class="btn-group">
+                                <a href="https://www.klook.com/zh-TW/activity/49764-shinhotaka-ropeway-ticket-gifu/" target="_blank" class="action-btn btn-klook">🎫 Klook 購票 (約179元)</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">14:55</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">🚌 濃飛巴士</span></div>
+                            <h3>新穗高纜車站 ➔ 高山</h3>
+                            <p>結束觀光後，搭乘直達巴士前往高山市區飯店。<strong>【建議搭乘 14:55 或 15:55 班次，車程約1.5小時】</strong></p>
+                            <div class="btn-group">
+                                <a href="https://www.nouhibus.co.jp/route_bus/shinhotaka-line-zh/" target="_blank" class="action-btn">🕒 查看時刻表</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hotel-card">
+                    <h3>🏨 住宿：東急 Stay 飛驒高山結之湯</h3>
+                    <p><strong>預訂平台：</strong> Rakuten Travel</p>
+                    <p><strong>房型：</strong> 雙床房, 禁菸 (24m² 高級房) / 不含早</p>
+                    <p><strong>退改政策：</strong> 6月17日前可免費取消</p>
+                    <p class="price">費用：¥24,098 (到店付款，台幣約 4772)</p>
+                    <div class="btn-group">
+                        <a href="https://maps.google.com/?q=Tokyu+Stay+Hida+Takayama" target="_blank" class="action-btn">📍 地圖</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="day5" class="day-section">
+            <div class="day-header" onclick="toggleSection('day5')">
+                <h2>Day 5 | 06.21 (日)</h2>
+                <span class="city-badge">📍 高山 / 犬山</span>
+                <span class="accordion-indicator">▼</span>
+            </div>
+            <div class="day-content" id="content-day5">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">早上</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-sight">📸 景點</span></div>
+                            <h3>宮川朝市 & 高山老街</h3>
+                            <p>早起逛日本三大朝市之一的「宮川朝市」。接著漫步「飛驒小京都」高山老街，品嚐飛驒牛握壽司與烤肉串。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">下午</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">🚆 JR特急</span></div>
+                            <h3>高山 ➔ 犬山市</h3>
+                            <p>搭乘 JR 特急飛驒號 (Hida) 經由名古屋/岐阜轉乘名鐵，前往犬山市飯店 Check-in。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hotel-card">
+                    <h3>🏨 住宿：犬山市/名古屋 飯店 (待填入)</h3>
+                    <p><strong>預訂資訊：</strong> 請依照實際預訂填入</p>
+                    <p><strong>房型：</strong> 待確認</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="day6" class="day-section">
+            <div class="day-header" onclick="toggleSection('day6')">
+                <h2>Day 6 | 06.22 (一)</h2>
+                <span class="city-badge">📍 犬山 Inuyama</span>
+                <span class="accordion-indicator">▼</span>
+            </div>
+            <div class="day-content" id="content-day6">
+                <div class="task-box">
+                    <strong>💡 犬山一日遊小建議</strong>
+                    犬山城周邊景點非常集中，步行即可抵達。建議可購買「犬山城下町套票」較為划算。
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">09:30</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-sight">🏰 景點</span></div>
+                            <h3>國寶 犬山城</h3>
+                            <p>日本現存最古老木造天守閣之一（國寶五城）。登上天守閣頂層，可將木曾川的絕美壯闊景色盡收眼底。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">11:00</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-sight">⛩️ 景點</span></div>
+                            <h3>三光稻荷神社</h3>
+                            <p>位於犬山城山腳下，以「洗錢（加倍奉還）」與超級可愛的「粉紅色愛心繪馬」聞名，是求良緣與財運的熱門打卡點。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">12:30</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper">
+                                <span class="tag tag-sight">📸 景點</span>
+                                <span class="tag tag-food">🍽️ 美食</span>
+                            </div>
+                            <h3>犬山城下町 散策與午餐</h3>
+                            <p>保留江戶時代風情的古老街道。推薦品嚐在地特色小吃：五平餅、飛驒牛可樂餅、以及用可愛糰子裝飾的甜點。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">傍晚</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">🚆 交通</span></div>
+                            <h3>前往 名古屋</h3>
+                            <p>結束犬山行程，搭乘名鐵前往名古屋市區，準備明天的返家行程。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hotel-card">
+                    <h3>🏨 住宿：名古屋市區 飯店 (待填入)</h3>
+                    <p><strong>備註：</strong> 建議安排在名古屋站或榮站周邊，方便隔日搭車前往機場。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="day7" class="day-section">
+            <div class="day-header" onclick="toggleSection('day7')">
+                <h2>Day 7 | 06.23 (二)</h2>
+                <span class="city-badge">📍 名古屋 / 賦歸</span>
+                <span class="accordion-indicator">▼</span>
+            </div>
+            <div class="day-content" id="content-day7">
+                <div class="task-box">
+                    <strong>💡 今日班機提醒</strong>
+                    請務必於航班起飛前 2-2.5 小時抵達中部國際機場 (NGO) 辦理報到與託運手續。
+                </div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">08:00</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-food">🍽️ 餐廳</span></div>
+                            <h3>飯店早餐 & 退房</h3>
+                            <p>悠閒享用飯店早餐。請於 <strong>11:00 前辦理 Check-out</strong>，並將行李寄放於飯店或名古屋車站置物櫃。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">11:30</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-sight">🛍️ 景點/購物</span></div>
+                            <h3>名古屋市區 最後巡禮</h3>
+                            <p>把握最後時間進行市區採購與觀光，推薦兩個景點二擇一：<br>
+                                <strong>1. 榮商圈 (Sakae)：</strong>百貨林立（三越/唐吉訶德），還有著名的地標 Oasis 21 與名古屋電視塔。<br>
+                                <strong>2. 大須觀音商店街：</strong>充滿異國風情與平價服飾、藥妝、動漫商品的超長拱廊商店街。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">14:50</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">🚆 名鐵</span></div>
+                            <h3>前往 中部國際機場</h3>
+                            <p>回車站領取行李。建議搭乘 <strong>14:50 或 15:20 發車的「名鐵 μ-SKY 特急」</strong>，約 28 分鐘即可直達機場。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">18:20</div>
+                        <div class="timeline-card">
+                            <div class="tags-wrapper"><span class="tag tag-transport">✈️ 航班</span></div>
+                            <h3>星宇航空返程 JX801 (參考時間)</h3>
+                            <p>NGO 18:20 ➔ TPE 20:30 (請以最終實際航班時間為準)。結束美好的日本之旅！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="other" class="day-section">
+            <div class="day-header" onclick="toggleSection('other')">
+                <h2>📋 其他事項</h2>
+                <span class="accordion-indicator">▼</span>
+            </div>
+            <div class="day-content" id="content-other">
+                <div class="tools-section two-col">
+                    <div class="tool-card">
+                        <h3>✅ 行前準備 Checklist</h3>
+                        <ul class="checklist">
+                            <li class="done"><input type="checkbox" checked disabled> 護照效期確認 (需大於6個月)</li>
+                            <li class="done"><input type="checkbox" checked disabled> 網卡 (eSIM/實體卡) 購買與設定</li>
+                            <li class="done"><input type="checkbox" checked disabled> Visit Japan Web (VJW) 線上填寫</li>
+                            <li class="done"><input type="checkbox" checked disabled> 旅遊平安不便險投保</li>
+                            <li><input type="checkbox"> 星宇航空預辦登機 (出發前48小時)</li>
+                            <li><input type="checkbox"> 兌換日幣現金</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h3>🆘 重要緊急聯絡資訊</h3>
+                        <div style="font-size: 0.95rem;">
+                            <p style="margin-bottom: 8px;"><strong>旅外急難救助全球免付費專線：</strong><br>001-800-0885-0885</p>
+                            <p style="margin-bottom: 8px;"><strong>駐日經濟文化代表處 (東京)：</strong><br>+81-3-3280-7811</p>
+                            <p style="margin-bottom: 8px;"><strong>報案/救護車：</strong> 警察 110 / 救護車 119</p>
+                            <p style="color: #990000; font-size: 0.85rem; margin-top: 10px;">* 護照遺失處理：先至當地警察局報案取得遺失證明，再聯繫代表處申請入國證明書。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-card" style="margin-top: 20px;">
+                    <h3>🧳 攜帶物品清單 Packing List</h3>
+                    <div class="tools-section two-col" style="gap: 10px;">
+                        <div>
+                            <p style="font-weight: bold; color: var(--primary-color);">文件與財務</p>
+                            <ul class="checklist">
+                                <li><input type="checkbox"> 護照正本與影本</li>
+                                <li><input type="checkbox"> 信用卡 (建議帶 JCB / Visa / 綁定 Apple Pay)</li>
+                                <li><input type="checkbox"> 日幣現金 (含零錢包，山上小店多收現金)</li>
+                                <li><input type="checkbox"> 行程表、交通票券、住宿憑證 (紙本備用)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p style="font-weight: bold; color: var(--primary-color);">電子產品</p>
+                            <ul class="checklist">
+                                <li><input type="checkbox"> 手機與充電線</li>
+                                <li><input type="checkbox"> 行動電源 (必備，山上找插座不易)</li>
+                                <li><input type="checkbox"> 轉接頭/多孔充電器</li>
+                                <li><input type="checkbox"> 備用手機記憶卡/雲端空間清理</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p style="font-weight: bold; color: var(--primary-color);">衣物與配件 (夏季山上偏涼)</p>
+                            <ul class="checklist">
+                                <li><input type="checkbox"> 短袖上衣、好走的休閒褲</li>
+                                <li><input type="checkbox"> 防風/防潑水薄外套 (上高地/纜車必備)</li>
+                                <li><input type="checkbox"> 好走的運動鞋或輕健行鞋</li>
+                                <li><input type="checkbox"> 遮陽帽、太陽眼鏡、輕便雨傘/雨衣</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p style="font-weight: bold; color: var(--primary-color);">個人藥品與生活用品</p>
+                            <ul class="checklist">
+                                <li><input type="checkbox"> 腸胃藥、止痛藥、感冒藥</li>
+                                <li><input type="checkbox"> 暈車藥 (前往平湯/高山的巴士可能彎道多)</li>
+                                <li><input type="checkbox"> 防蚊液、防曬乳 (戶外行程必備)</li>
+                                <li><input type="checkbox"> 環保購物袋</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // 導覽列點擊與樣式切換
+        document.querySelectorAll('.nav-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const targetId = this.getAttribute('data-target');
+                openSpecificSection(targetId);
+            });
+        });
+
+        // 區塊展開與收合 (手風琴)
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const header = section.querySelector('.day-header');
+            const content = section.querySelector('.day-content');
+            
+            const isOpen = content.classList.contains('open');
+            
+            if (!isOpen) {
+                content.classList.add('open');
+                header.classList.add('active');
+            } else {
+                content.classList.remove('open');
+                header.classList.remove('active');
+            }
+        }
+
+        // 從導覽列強制展開
+        function openSpecificSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const header = section.querySelector('.day-header');
+            const content = section.querySelector('.day-content');
+            
+            if (!content.classList.contains('open')) {
+                content.classList.add('open');
+                header.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
