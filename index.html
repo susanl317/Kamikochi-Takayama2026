@@ -184,6 +184,14 @@
             .day-header h2 { font-size: 1.3rem; }
             .route-line-container::before { top: 20px; }
         }
+        /* 子區塊樣式 */
+.sub-accordion { background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow-sm); }
+.sub-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: #FDFDFD; font-weight: bold; color: var(--primary-color); transition: background 0.2s; }
+.sub-header:hover { background: #F5F7F6; }
+.sub-content { display: none; padding: 16px; border-top: 1px solid var(--border-color); }
+.sub-content.open { display: block; }
+.sub-indicator { transition: transform 0.3s; font-size: 0.8rem; }
+.sub-header.active .sub-indicator { transform: rotate(180deg); }
     </style>
 </head>
 <body>
@@ -628,131 +636,94 @@
             </div>
         </section>
 
-        <section id="other" class="day-section">
-            <div class="day-header" onclick="toggleSection('other')">
-                <h2>📋 其他事項</h2>
-                <span class="accordion-indicator">▼</span>
-            </div>
-            <div class="day-content" id="content-other">
-                <div class="tools-section two-col">
-                    <div class="tool-card">
-                        <h3>✅ 行前準備 Checklist</h3>
-                        <ul class="checklist">
-                            <li class="done"><input type="checkbox" checked disabled> 護照效期確認 (需大於6個月)</li>
-                            <li class="done"><input type="checkbox" checked disabled> 網卡 (eSIM/實體卡) 購買與設定</li>
-                            <li class="done"><input type="checkbox" checked disabled> Visit Japan Web (VJW) 線上填寫</li>
-                            <li class="done"><input type="checkbox" checked disabled> 旅遊平安不便險投保</li>
-                            <li><input type="checkbox"> 星宇航空預辦登機 (出發前48小時)</li>
-                            <li><input type="checkbox"> 兌換日幣現金</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="tool-card">
-                        <h3>🆘 重要緊急聯絡資訊</h3>
-                        <div style="font-size: 0.95rem;">
-                            <p style="margin-bottom: 8px;"><strong>旅外急難救助全球免付費專線：</strong><br>001-800-0885-0885</p>
-                            <p style="margin-bottom: 8px;"><strong>駐日經濟文化代表處 (東京)：</strong><br>+81-3-3280-7811</p>
-                            <p style="margin-bottom: 8px;"><strong>報案/救護車：</strong> 警察 110 / 救護車 119</p>
-                            <p style="color: #990000; font-size: 0.85rem; margin-top: 10px;">* 護照遺失處理：先至當地警察局報案取得遺失證明，再聯繫代表處申請入國證明書。</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="tool-card" style="margin-top: 20px;">
-                       <h3>🚆 交通與行李預約指南</h3>
-    
-                   <!-- 交通預約表格 -->
-    <div style="overflow-x: auto; margin-bottom: 20px;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
-            <thead>
-                <tr style="border-bottom: 2px solid var(--primary-color);">
-                    <th style="padding: 8px;">日期</th>
-                    <th style="padding: 8px;">路線</th>
-                    <th style="padding: 8px;">預約建議</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td style="padding: 8px;">D2</td>
-                    <td style="padding: 8px;">東京➔長野 (新幹線)</td>
-                    <td style="padding: 8px; color: #990000; font-weight: bold;">強烈建議劃位</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td style="padding: 8px;">D2</td>
-                    <td style="padding: 8px;">長野➔上高地</td>
-                    <td style="padding: 8px;">已預約 (備好QR)</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td style="padding: 8px;">D5</td>
-                    <td style="padding: 8px;">高山➔犬山</td>
-                    <td style="padding: 8px; color: #990000; font-weight: bold;">需預約飛驒號</td>
-                </tr>
-            </tbody>
-        </table>
+  <section id="other" class="day-section">
+    <div class="day-header" onclick="toggleSection('other')">
+        <h2>📋 其他事項</h2>
+        <span class="accordion-indicator">▼</span>
     </div>
-
-    <!-- 行李建議 -->
-    <p style="font-weight: bold; color: var(--primary-color); margin-bottom: 8px;">🧳 行李轉運建議</p>
-    <ul class="checklist" style="margin-bottom: 16px;">
-        <li>• <strong>D1-D3 (上高地段)：</strong>建議使用「宅急便」將大行李直接寄至 D4 高山飯店，隨身僅帶輕便行李進山。</li>
-        <li>• <strong>飯店確認：</strong>入住時務必確認飯店是否支援 Yamato Transport 或 Sagawa 寄送服務。</li>
-    </ul>
-
-    <!-- 準備工作 -->
-    <p style="font-weight: bold; color: var(--primary-color); margin-bottom: 8px;">✅ 準備工作清單</p>
-    <ul class="checklist">
-        <li><input type="checkbox"> 下載 JR East Train Reservation (Ekinet) App</li>
-        <li><input type="checkbox"> 準備「行李宅急便」的飯店地址 (日文版)</li>
-        <li><input type="checkbox"> 將所有訂票截圖存入手機相簿「收藏夾」</li>
-    </ul>
-</div>
-                
-                <div class="tool-card" style="margin-top: 20px;">
-                    <h3>🧳 攜帶物品清單 Packing List</h3>
-                    <div class="tools-section two-col" style="gap: 10px;">
-                        <div>
-                            <p style="font-weight: bold; color: var(--primary-color);">文件與財務</p>
-                            <ul class="checklist">
-                                <li><input type="checkbox"> 護照正本與影本</li>
-                                <li><input type="checkbox"> 信用卡 (建議帶 JCB / Visa / 綁定 Apple Pay)</li>
-                                <li><input type="checkbox"> 日幣現金 (含零錢包，山上小店多收現金)</li>
-                                <li><input type="checkbox"> 行程表、交通票券、住宿憑證 (紙本備用)</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p style="font-weight: bold; color: var(--primary-color);">電子產品</p>
-                            <ul class="checklist">
-                                <li><input type="checkbox"> 手機與充電線</li>
-                                <li><input type="checkbox"> 行動電源 (必備，山上找插座不易)</li>
-                                <li><input type="checkbox"> 轉接頭/多孔充電器</li>
-                                <li><input type="checkbox"> 備用手機記憶卡/雲端空間清理</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p style="font-weight: bold; color: var(--primary-color);">衣物與配件 (夏季山上偏涼)</p>
-                            <ul class="checklist">
-                                <li><input type="checkbox"> 短袖上衣、好走的休閒褲</li>
-                                <li><input type="checkbox"> 防風/防潑水薄外套 (上高地/纜車必備)</li>
-                                <li><input type="checkbox"> 好走的運動鞋或輕健行鞋</li>
-                                <li><input type="checkbox"> 遮陽帽、太陽眼鏡、輕便雨傘/雨衣</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p style="font-weight: bold; color: var(--primary-color);">個人藥品與生活用品</p>
-                            <ul class="checklist">
-                                <li><input type="checkbox"> 腸胃藥、止痛藥、感冒藥</li>
-                                <li><input type="checkbox"> 暈車藥 (前往平湯/高山的巴士可能彎道多)</li>
-                                <li><input type="checkbox"> 防蚊液、防曬乳 (戶外行程必備)</li>
-                                <li><input type="checkbox"> 環保購物袋</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+    <div class="day-content" id="content-other">
+        
+        <!-- Checklist -->
+        <div class="sub-accordion">
+            <div class="sub-header" onclick="toggleSubSection(this)">
+                <span>✅ 行前準備 Checklist</span>
+                <span class="sub-indicator">▼</span>
             </div>
-        </section>
+            <div class="sub-content">
+                <ul class="checklist">
+                    <li class="done"><input type="checkbox" checked disabled> 護照效期確認 (需大於6個月)</li>
+                    <li class="done"><input type="checkbox" checked disabled> 網卡 (eSIM/實體卡) 購買與設定</li>
+                    <li class="done"><input type="checkbox" checked disabled> Visit Japan Web (VJW) 線上填寫</li>
+                    <li class="done"><input type="checkbox" checked disabled> 旅遊平安不便險投保</li>
+                    <li><input type="checkbox"> 星宇航空預辦登機 (出發前48小時)</li>
+                    <li><input type="checkbox"> 兌換日幣現金</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Emergency Info -->
+        <div class="sub-accordion">
+            <div class="sub-header" onclick="toggleSubSection(this)">
+                <span>🆘 重要緊急聯絡資訊</span>
+                <span class="sub-indicator">▼</span>
+            </div>
+            <div class="sub-content">
+                <p style="margin-bottom: 8px;"><strong>旅外急難救助全球免付費專線：</strong><br>001-800-0885-0885</p>
+                <p style="margin-bottom: 8px;"><strong>駐日經濟文化代表處 (東京)：</strong><br>+81-3-3280-7811</p>
+                <p style="margin-bottom: 8px;"><strong>報案/救護車：</strong> 警察 110 / 救護車 119</p>
+            </div>
+        </div>
+
+        <!-- Transport Guide -->
+        <div class="sub-accordion">
+            <div class="sub-header" onclick="toggleSubSection(this)">
+                <span>🚆 交通與行李預約指南</span>
+                <span class="sub-indicator">▼</span>
+            </div>
+            <div class="sub-content">
+                <div style="overflow-x: auto; margin-bottom: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                        <tr style="border-bottom: 1px solid var(--border-color);"><td style="padding: 6px;">D2 東京➔長野</td><td style="padding: 6px; font-weight: bold;">強烈建議劃位</td></tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);"><td style="padding: 6px;">D2 長野➔上高地</td><td style="padding: 6px;">已預約 (備好QR)</td></tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);"><td style="padding: 6px;">D5 高山➔犬山</td><td style="padding: 6px; font-weight: bold;">需預約飛驒號</td></tr>
+                    </table>
+                </div>
+                <p style="font-weight: bold; color: var(--primary-color);">🧳 行李轉運與準備：</p>
+                <ul class="checklist">
+                    <li>使用「宅急便」寄送大行李至 D4 高山飯店。</li>
+                    <li>下載 JR East Train Reservation (Ekinet) App。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Packing List -->
+        <div class="sub-accordion">
+            <div class="sub-header" onclick="toggleSubSection(this)">
+                <span>🧳 攜帶物品清單</span>
+                <span class="sub-indicator">▼</span>
+            </div>
+            <div class="sub-content">
+                <ul class="checklist">
+                    <li><input type="checkbox"> 防風/防潑水外套 (上高地必備)</li>
+                    <li><input type="checkbox"> 護照、信用卡、日幣現鈔</li>
+                    <li><input type="checkbox"> 行動電源、多孔充電器</li>
+                    <li><input type="checkbox"> 個人常用藥品 (腸胃/感冒/暈車藥)</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</section>
 
     </main>
 
     <script>
+      // 子區塊開合控制
+function toggleSubSection(headerElement) {
+    const content = headerElement.nextElementSibling;
+    headerElement.classList.toggle('active');
+    content.classList.toggle('open');
+}
         // 導覽列點擊與樣式切換
         document.querySelectorAll('.nav-btn').forEach(button => {
             button.addEventListener('click', function(e) {
